@@ -50,7 +50,7 @@ function Hero() {
         className="absolute bottom-10 left-[8vw] flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-white/40"
       >
         <span className="inline-block h-8 w-[1px] animate-pulse bg-white/40" />
-        Scroll — take it apart
+        Scroll — meet our agent
       </motion.div>
     </section>
   );
@@ -64,10 +64,10 @@ function Transition() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.6 }}
-        className="max-w-[16ch] text-right text-[clamp(1.8rem,5vw,3.5rem)] font-medium leading-tight text-white/90"
+        className="max-w-[18ch] text-right text-[clamp(1.8rem,5vw,3.5rem)] font-medium leading-tight text-white/90"
       >
-        Every great product is more than its surface.
-        <span className="text-[#ff5d3b]"> Watch ours come apart.</span>
+        Building real products means surviving real impact.
+        <span className="text-[#ff5d3b]"> Watch what happens next.</span>
       </motion.h2>
     </section>
   );
@@ -87,7 +87,7 @@ function Services() {
           What we build
         </p>
         <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-semibold text-white">
-          Every part has a purpose.
+          Engineered to take the hit.
         </h2>
       </motion.div>
 
@@ -166,11 +166,12 @@ function Projects() {
 
       {/* contact */}
       <motion.div
+        id="contact"
         variants={fadeUp}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.4 }}
-        className="mt-24 flex flex-col items-start gap-6 px-[8vw] md:flex-row md:items-end md:justify-between"
+        className="mt-24 flex scroll-mt-24 flex-col items-start gap-6 px-[8vw] md:flex-row md:items-end md:justify-between"
       >
         <div>
           <h2 className="text-[clamp(2rem,6vw,4rem)] font-semibold leading-none text-white">
@@ -196,12 +197,34 @@ function Projects() {
   );
 }
 
+function Team() {
+  return (
+    <section className="flex h-screen w-full flex-col justify-end px-[8vw] pb-24">
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.5 }}
+      >
+        <p className="mb-2 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]">
+          The team
+        </p>
+        <h2 className="max-w-[20ch] text-[clamp(1.8rem,5vw,3.2rem)] font-semibold leading-tight text-white">
+          Things break. Our developers ship the fix —
+          <span className="text-[#ff5d3b]"> every single time.</span>
+        </h2>
+      </motion.div>
+    </section>
+  );
+}
+
 export default function Overlay() {
   return (
     <div className="w-screen text-white">
       <Hero />
       <Transition />
       <Services />
+      <Team />
       <Projects />
     </div>
   );

@@ -27,8 +27,17 @@ export default function SmoothScroll({
     };
     raf = requestAnimationFrame(loop);
 
+    // AI-agent bubble → smooth-scroll to the contact section
+    const connect = () => {
+      const el = document.getElementById("contact");
+      if (el) lenis.scrollTo(el, { offset: -80 });
+      else lenis.scrollTo(document.body.scrollHeight);
+    };
+    window.addEventListener("ritora:connect", connect);
+
     return () => {
       cancelAnimationFrame(raf);
+      window.removeEventListener("ritora:connect", connect);
       lenis.destroy();
     };
   }, []);

@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import SmoothScroll from "@/components/SmoothScroll";
 import Overlay from "@/components/Sections";
 import Loader from "@/components/Loader";
+import ConnectBubble from "@/components/ConnectBubble";
 
 // WebGL must only run on the client
 const Experience = dynamic(() => import("@/components/Experience"), {
@@ -19,6 +20,9 @@ export default function Home() {
       <div className="pointer-events-none fixed inset-0 z-0">
         <Experience />
       </div>
+
+      {/* AI-agent bubble (clickable, above everything) */}
+      <ConnectBubble />
 
       {/* scrolling content on top */}
       <main className="relative z-10">
