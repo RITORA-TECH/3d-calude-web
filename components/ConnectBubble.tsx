@@ -29,8 +29,8 @@ export default function ConnectBubble() {
   }, []);
 
   return (
-    <div className="pointer-events-none fixed right-[6vw] top-[28vh] z-30 hidden md:block">
-      <div ref={ref} style={{ transition: "opacity .25s" }} className="w-72">
+    <div className="pointer-events-none fixed right-[6vw] top-[20vh] z-30 md:right-[16vw] md:top-[33vh]">
+      <div ref={ref} style={{ transition: "opacity .25s" }} className="w-56 md:w-64">
         <button
           onClick={() =>
             window.dispatchEvent(new CustomEvent("ritora:connect"))
@@ -46,7 +46,8 @@ export default function ConnectBubble() {
           <div className="mt-1 text-xs text-white/60">
             Click me to connect with the team →
           </div>
-          <span className="absolute -bottom-2 right-10 h-4 w-4 rotate-45 border-b border-r border-white/15 bg-[#0b1020]/90" />
+          {/* tail pointing down toward the robot */}
+          <span className="absolute -bottom-2 left-1/2 h-4 w-4 -translate-x-1/2 rotate-45 border-b border-r border-white/15 bg-[#0b1020]/90" />
         </button>
       </div>
     </div>

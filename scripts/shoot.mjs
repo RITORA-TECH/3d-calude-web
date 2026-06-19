@@ -11,12 +11,10 @@ const browser = await puppeteer.launch({
     "--enable-webgl",
     "--use-gl=angle",
     "--use-angle=swiftshader",
-    "--window-size=1440,900",
   ],
 });
 
 const page = await browser.newPage();
-await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
 
 const errors = [];
 page.on("console", (m) => {
@@ -24,28 +22,45 @@ page.on("console", (m) => {
 });
 page.on("pageerror", (e) => errors.push("PAGEERROR: " + e.message));
 
-await page.goto("http://localhost:3000/", { waitUntil: "networkidle2", timeout: 60000 });
-await new Promise((r) => setTimeout(r, 6000)); // let GLBs + draco load
-
+// timeline frames
 const shots = [
   [0.02, "01-intro"],
-  [0.14, "02-walk"],
-  [0.30, "03-seated-drive"],
-  [0.46, "04-crash"],
-  [0.51, "05-fly"],
-  [0.60, "06-services"],
-  [0.72, "07-fix"],
-  [0.88, "08-driveaway"],
-  [0.96, "09-projects"],
+  [0.12, "02-walk"],
+  [0.19, "03-climb-in"],
+  [0.28, "04-drive"],
+  [0.355, "05-crash"],
+  [0.43, "06-parts"],
+  [0.5, "07-devs"],
+  [0.6, "08-reassemble"],
+  [0.7, "09-repaired"],
+  [0.92, "10-host"],
+  [0.97, "11-connect"],
 ];
 
-for (const [frac, name] of shots) {
-  await page.evaluate((f) => {
-    const h = document.body.scrollHeight - window.innerHeight;
-    window.scrollTo(0, h * f);
-  }, frac);
-  await new Promise((r) => setTimeout(r, 1600));
-  await page.screenshot({ path: `/tmp/n-${name}.png` });
+// viewports to verify responsiveness
+const viewports = [
+  { name: "desktop", width: 1680, height: 1050 },
+  { name: "laptop", width: 1280, height: 800 },
+  { name: "tablet", width: 834, height: 1112 },
+  { name: "mobile", width: 390, height: 844 },
+];
+
+for (const vp of viewports) {
+  await page.setViewport({ width: vp.width, height: vp.height, deviceScaleFactor: 1 });
+  await page.goto("http://localhost:3000/", { waitUntil: "networkidle2", timeout: 60000 });
+  await new Promise((r) => setTimeout(r, 6000)); // let GLBs + draco load
+
+  // desktop gets the full timeline; others just a few key frames
+  const frames = vp.name === "desktop" ? shots : [shots[0], shots[2], shots[5], shots[9]];
+
+  for (const [frac, name] of frames) {
+    await page.evaluate((f) => {
+      const h = document.body.scrollHeight - window.innerHeight;
+      window.scrollTo(0, h * f);
+    }, frac);
+    await new Promise((r) => setTimeout(r, 1500));
+    await page.screenshot({ path: `/tmp/n-${vp.name}-${name}.png` });
+  }
 }
 
 const info = await page.evaluate(() => {

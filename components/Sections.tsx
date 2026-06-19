@@ -1,7 +1,49 @@
 "use client";
 
+import { useState } from "react";
 import { motion, type Variants } from "framer-motion";
 import { company, services, projects } from "@/lib/content";
+
+/** End-of-page "let's connect" capture — the returning agent's ask. */
+function ConnectForm() {
+  const [email, setEmail] = useState("");
+  const [sent, setSent] = useState(false);
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email) return;
+    const subject = encodeURIComponent("Let's connect — new project");
+    const body = encodeURIComponent(
+      `Hi ${company.shortName} team,\n\nI'd like to talk about a project.\n\nMy email: ${email}\n`
+    );
+    window.location.href = `mailto:${company.email}?subject=${subject}&body=${body}`;
+    setSent(true);
+  }
+
+  return (
+    <form onSubmit={submit} className="w-full max-w-md">
+      <p className="mb-3 text-sm text-white/55">
+        Drop your email and our agent will take it from here.
+      </p>
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@company.com"
+          className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/35 focus:border-[#ff5d3b]"
+        />
+        <button
+          type="submit"
+          className="shrink-0 rounded-xl bg-[#ff5d3b] px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.03]"
+        >
+          {sent ? "Opening…" : "Let's connect"}
+        </button>
+      </div>
+    </form>
+  );
+}
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -17,7 +59,7 @@ const fadeUp: Variants = {
 
 function Hero() {
   return (
-    <section className="relative flex h-screen w-full flex-col justify-center px-[8vw]">
+    <section className="relative flex h-screen w-full flex-col justify-end pb-28 px-[8vw] md:justify-center md:pb-0">
       <motion.p
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -74,44 +116,33 @@ function Transition() {
 }
 
 function Services() {
+  // The service cards themselves are rendered in 3D (ServiceChips), bursting
+  // out of the repaired car. Here we just frame that moment with copy and a
+  // compact legend, so the two layers don't fight for attention.
   return (
-    <section className="flex min-h-screen w-full flex-col justify-center px-[8vw] py-24">
+    <section className="flex min-h-screen w-full flex-col justify-end px-[8vw] pb-16">
       <motion.div
         variants={fadeUp}
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.4 }}
-        className="mb-12"
       >
         <p className="mb-2 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]">
           What we build
         </p>
-        <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-semibold text-white">
-          Engineered to take the hit.
+        <h2 className="mb-6 max-w-[18ch] text-[clamp(2rem,5vw,3.5rem)] font-semibold leading-tight text-white">
+          Fixed, refined and ready —
+          <span className="text-[#ff5d3b]"> straight out of the build.</span>
         </h2>
+        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/55">
+          {services.map((s) => (
+            <span key={s.id} className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#ff5d3b]" />
+              {s.title}
+            </span>
+          ))}
+        </div>
       </motion.div>
-
-      <div className="grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/5 md:grid-cols-2 lg:grid-cols-3">
-        {services.map((s, i) => (
-          <motion.div
-            key={s.id}
-            custom={i}
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
-            className="group relative bg-[#080b16]/80 p-8 backdrop-blur-sm transition-colors hover:bg-[#0d1222]"
-          >
-            <div className="mb-6 text-xs uppercase tracking-[0.25em] text-[#ff5d3b]/80">
-              {s.part}
-            </div>
-            <h3 className="mb-3 text-2xl font-semibold text-white">{s.title}</h3>
-            <p className="mb-5 text-sm leading-relaxed text-white/55">{s.blurb}</p>
-            <p className="text-xs font-medium tracking-wide text-white/40">{s.stack}</p>
-            <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-[#ff5d3b] transition-all duration-500 group-hover:w-full" />
-          </motion.div>
-        ))}
-      </div>
     </section>
   );
 }
@@ -171,15 +202,19 @@ function Projects() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.4 }}
-        className="mt-24 flex scroll-mt-24 flex-col items-start gap-6 px-[8vw] md:flex-row md:items-end md:justify-between"
+        className="mt-24 flex scroll-mt-24 flex-col items-start gap-10 px-[8vw] md:flex-row md:justify-between"
       >
-        <div>
+        <div className="max-w-xl">
+          <p className="mb-2 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]">
+            Let&apos;s connect
+          </p>
           <h2 className="text-[clamp(2rem,6vw,4rem)] font-semibold leading-none text-white">
             Let&apos;s build yours.
           </h2>
-          <p className="mt-4 max-w-[40ch] text-white/55">{company.about}</p>
+          <p className="mb-7 mt-4 max-w-[40ch] text-white/55">{company.about}</p>
+          <ConnectForm />
         </div>
-        <div className="flex flex-col gap-2 text-right text-sm text-white/60">
+        <div className="flex flex-col gap-2 text-sm text-white/60 md:text-right">
           <a href={`mailto:${company.email}`} className="hover:text-[#ff5d3b]">
             {company.email}
           </a>
@@ -223,8 +258,8 @@ export default function Overlay() {
     <div className="w-screen text-white">
       <Hero />
       <Transition />
-      <Services />
       <Team />
+      <Services />
       <Projects />
     </div>
   );

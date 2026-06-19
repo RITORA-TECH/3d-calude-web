@@ -8,7 +8,8 @@ import { SkeletonUtils } from "three-stdlib";
 
 useGLTF.preload("/models/RobotExpressive/RobotExpressive.glb");
 
-const ONCE = new Set(["Sitting", "Wave", "ThumbsUp", "Yes", "No", "Jump", "Punch"]);
+// only the seated pose should freeze on its last frame; everything else loops
+const ONCE = new Set(["Sitting"]);
 
 type Props = {
   /** desired clip name, mutated by the orchestrator */
@@ -25,17 +26,24 @@ export default function Agent({ actionRef, color }: Props) {
 
   const cloned = useMemo(() => {
     const c = SkeletonUtils.clone(scene) as THREE.Group;
+    const tint = color ? new THREE.Color(color) : null;
     c.traverse((o) => {
       const m = o as THREE.Mesh;
       if (!m.isMesh) return;
       m.castShadow = true;
-      if (color) {
-        const mat = m.material as THREE.MeshStandardMaterial;
-        if (mat && "color" in mat) {
-          m.material = mat.clone();
-          (m.material as THREE.MeshStandardMaterial).color = new THREE.Color(color);
-        }
+      const src = m.material as THREE.MeshStandardMaterial;
+      if (!src || !("color" in src)) return;
+      // glossy, environment-lit finish so the robot reads as a polished android
+      const mat = src.clone();
+      mat.metalness = 0.85;
+      mat.roughness = 0.25;
+      mat.envMapIntensity = 1.4;
+      if (tint) {
+        // keep the model's shading variation but push it toward the crew colour
+        mat.color.lerp(tint, 0.7);
+        mat.emissive = tint.clone().multiplyScalar(0.15);
       }
+      m.material = mat;
     });
     return c;
   }, [scene, color]);
