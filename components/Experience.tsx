@@ -14,6 +14,7 @@ import Ferrari from "./Ferrari";
 import Agent from "./Agent";
 import ServiceChips from "./ServiceChips";
 import { scrollState } from "@/lib/scroll";
+import { prefersReducedMotion } from "@/lib/motion";
 
 /* ---------- helpers ---------- */
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -69,6 +70,7 @@ function useDebris(count = 60) {
 
 function Stage() {
   const { camera, size } = useThree();
+  const reduceMotion = useRef(prefersReducedMotion());
 
   const walker = useRef<THREE.Group>(null!);
   const walkerAct = useRef("Wave");
@@ -267,7 +269,8 @@ function Stage() {
     cl.lerp(V(-1, 1, 0), smooth(0.62, 0.72, p));
     cl.lerp(V(2.3, 1.4, 4.6), smooth(0.86, 0.97, p)); // look at the host
 
-    if (impulse > 0.001) {
+    // camera shake is involuntary motion — skip it under reduced-motion
+    if (impulse > 0.001 && !reduceMotion.current) {
       cp.x += (Math.random() - 0.5) * impulse * 1.4;
       cp.y += (Math.random() - 0.5) * impulse * 1.0;
     }

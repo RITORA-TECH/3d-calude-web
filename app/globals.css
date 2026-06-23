@@ -42,7 +42,42 @@ html.lenis body {
   }
 }
 
+/* Scrim behind text that sits over the bright 3D scene, so copy keeps
+   WCAG-AA contrast regardless of what's rendered behind it. */
+.text-scrim {
+  position: relative;
+}
+.text-scrim::before {
+  content: "";
+  position: absolute;
+  inset: -8% -6%;
+  z-index: -1;
+  background: radial-gradient(
+    120% 100% at 0% 50%,
+    rgba(5, 7, 15, 0.85) 0%,
+    rgba(5, 7, 15, 0.55) 45%,
+    rgba(5, 7, 15, 0) 100%
+  );
+  pointer-events: none;
+}
+
 ::-webkit-scrollbar {
   width: 0;
   height: 0;
+}
+
+/* Accessibility: respect reduced-motion for CSS-driven animation.
+   (The scroll narrative also has a JS fallback in SmoothScroll/Experience.) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-\[marquee_38s_linear_infinite\] {
+    animation: none !important;
+  }
 }

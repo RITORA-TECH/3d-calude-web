@@ -1,10 +1,221 @@
 "use client";
 
 import { useState } from "react";
-import { motion, type Variants } from "framer-motion";
-import { company, services, projects } from "@/lib/content";
+import { motion } from "framer-motion";
+import {
+  company,
+  services,
+  projects,
+  narrative,
+  clientsLine,
+  techStack,
+  testimonials,
+  team,
+} from "@/lib/content";
+import { fadeUp } from "@/lib/motion";
 
-/** End-of-page "let's connect" capture — the returning agent's ask. */
+/* ---------------------------------------------------------------- Hero --- */
+function Hero() {
+  return (
+    <section className="relative flex h-screen w-full flex-col justify-end pb-28 px-[8vw] md:justify-center md:pb-0">
+      <div className="text-scrim max-w-[46ch]">
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="mb-4 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]"
+        >
+          {company.eyebrow}
+        </motion.p>
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.45 }}
+          className="max-w-[16ch] text-[clamp(2.6rem,8vw,6.2rem)] font-semibold leading-[0.98] tracking-tight text-white"
+        >
+          {company.headline}
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.7 }}
+          className="mt-6 max-w-[44ch] text-lg text-white/70"
+        >
+          {company.sub}
+        </motion.p>
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 1.1 }}
+        className="absolute bottom-10 left-[8vw] flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-white/50"
+      >
+        <span className="inline-block h-8 w-[1px] animate-pulse bg-white/40" />
+        {company.scrollCue}
+      </motion.div>
+    </section>
+  );
+}
+
+/* ---------------------------------------------------------- Transition --- */
+function Transition() {
+  return (
+    <section className="flex h-screen w-full items-center justify-end px-[8vw]">
+      <motion.h2
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.6 }}
+        className="text-scrim max-w-[20ch] text-right text-[clamp(1.8rem,5vw,3.4rem)] font-medium leading-tight text-white/90"
+      >
+        {narrative[0]}
+      </motion.h2>
+    </section>
+  );
+}
+
+/* ---------------------------------------------------------------- Team --- */
+function TeamGrid() {
+  // Hidden until real people are added (see TODO in lib/content.ts).
+  if (team.length === 0) return null;
+  return (
+    <div className="mt-12 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+      {team.map((m) => (
+        <div key={m.name} className="flex flex-col items-start gap-3">
+          <div className="aspect-square w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+            {m.photo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={m.photo} alt={`${m.name}, ${m.role}`} className="h-full w-full object-cover" />
+            ) : null}
+          </div>
+          <div>
+            <div className="text-sm font-semibold text-white">{m.name}</div>
+            <div className="text-xs text-white/50">{m.role}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function Team() {
+  return (
+    <section className="flex min-h-screen w-full flex-col justify-end px-[8vw] pb-24">
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.4 }}
+        className="text-scrim"
+      >
+        <p className="mb-2 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]">
+          One team, the whole stack
+        </p>
+        <h2 className="max-w-[22ch] text-[clamp(1.8rem,5vw,3.2rem)] font-semibold leading-tight text-white">
+          {narrative[1]}
+        </h2>
+        <p className="mt-5 max-w-[48ch] text-white/55">{clientsLine}</p>
+      </motion.div>
+      <TeamGrid />
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------ Services --- */
+function Services() {
+  return (
+    <section className="flex min-h-screen w-full flex-col justify-end px-[8vw] pb-20">
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.3 }}
+        className="text-scrim"
+      >
+        <p className="mb-2 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]">
+          What we build
+        </p>
+        <h2 className="mb-10 max-w-[20ch] text-[clamp(2rem,5vw,3.4rem)] font-semibold leading-tight text-white">
+          {narrative[2]}
+        </h2>
+      </motion.div>
+
+      <div className="grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+        {services.map((s, i) => (
+          <motion.div
+            key={s.id}
+            custom={i}
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.4 }}
+            className="border-l border-white/10 pl-4"
+          >
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#ff5d3b]" />
+              <h3 className="text-lg font-semibold text-white">{s.title}</h3>
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-white/55">{s.line}</p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* tech-stack badges — technical-buyer trust */}
+      <div className="mt-12 flex flex-wrap gap-2">
+        {techStack.map((t) => (
+          <span
+            key={t}
+            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/60"
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------- Testimonials --- */
+function Testimonials() {
+  // Hidden until real, consented quotes exist (see TODO in lib/content.ts).
+  if (testimonials.length === 0) return null;
+  return (
+    <section className="flex w-full flex-col justify-center px-[8vw] py-24">
+      <motion.p
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true }}
+        className="mb-10 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]"
+      >
+        In their words
+      </motion.p>
+      <div className="grid gap-6 md:grid-cols-2">
+        {testimonials.map((t, i) => (
+          <motion.figure
+            key={i}
+            custom={i}
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.4 }}
+            className="rounded-2xl border border-white/10 bg-[#0a0e1c] p-7"
+          >
+            <blockquote className="text-lg leading-relaxed text-white/85">
+              “{t.quote}”
+            </blockquote>
+            <figcaption className="mt-5 text-sm text-white/50">
+              <span className="text-white/80">{t.name}</span> — {t.role}, {t.company}
+            </figcaption>
+          </motion.figure>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------------------------- Connect (form) --- */
 function ConnectForm() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
@@ -12,7 +223,7 @@ function ConnectForm() {
   function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!email) return;
-    const subject = encodeURIComponent("Let's connect — new project");
+    const subject = encodeURIComponent("Start the conversation — new project");
     const body = encodeURIComponent(
       `Hi ${company.shortName} team,\n\nI'd like to talk about a project.\n\nMy email: ${email}\n`
     );
@@ -22,13 +233,17 @@ function ConnectForm() {
 
   return (
     <form onSubmit={submit} className="w-full max-w-md">
-      <p className="mb-3 text-sm text-white/55">
-        Drop your email and our agent will take it from here.
-      </p>
+      <p className="mb-3 text-sm text-white/55">{company.replyTime}</p>
       <div className="flex flex-col gap-3 sm:flex-row">
+        <label htmlFor="connect-email" className="sr-only">
+          Your email address
+        </label>
         <input
+          id="connect-email"
+          name="email"
           type="email"
           required
+          autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@company.com"
@@ -36,119 +251,18 @@ function ConnectForm() {
         />
         <button
           type="submit"
-          className="shrink-0 rounded-xl bg-[#ff5d3b] px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.03]"
+          className="shrink-0 rounded-xl bg-[#ff5d3b] px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff5d3b]"
         >
-          {sent ? "Opening…" : "Let's connect"}
+          {sent ? "Opening…" : "Start the conversation"}
         </button>
       </div>
     </form>
   );
 }
 
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
-
-/* shared motion presets */
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 40 },
-  show: (i = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.8, delay: i * 0.08, ease: EASE },
-  }),
-};
-
-function Hero() {
-  return (
-    <section className="relative flex h-screen w-full flex-col justify-end pb-28 px-[8vw] md:justify-center md:pb-0">
-      <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.3 }}
-        className="mb-4 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]"
-      >
-        {company.tagline}
-      </motion.p>
-      <motion.h1
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.45 }}
-        className="max-w-[14ch] text-[clamp(2.8rem,9vw,7rem)] font-semibold leading-[0.95] tracking-tight text-white"
-      >
-        {company.name}
-      </motion.h1>
-      <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.7 }}
-        className="mt-6 max-w-[42ch] text-lg text-white/60"
-      >
-        {company.hero}
-      </motion.p>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1.1 }}
-        className="absolute bottom-10 left-[8vw] flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-white/40"
-      >
-        <span className="inline-block h-8 w-[1px] animate-pulse bg-white/40" />
-        Scroll — meet our agent
-      </motion.div>
-    </section>
-  );
-}
-
-function Transition() {
-  return (
-    <section className="flex h-screen w-full items-center justify-end px-[8vw]">
-      <motion.h2
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.6 }}
-        className="max-w-[18ch] text-right text-[clamp(1.8rem,5vw,3.5rem)] font-medium leading-tight text-white/90"
-      >
-        Building real products means surviving real impact.
-        <span className="text-[#ff5d3b]"> Watch what happens next.</span>
-      </motion.h2>
-    </section>
-  );
-}
-
-function Services() {
-  // The service cards themselves are rendered in 3D (ServiceChips), bursting
-  // out of the repaired car. Here we just frame that moment with copy and a
-  // compact legend, so the two layers don't fight for attention.
-  return (
-    <section className="flex min-h-screen w-full flex-col justify-end px-[8vw] pb-16">
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.4 }}
-      >
-        <p className="mb-2 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]">
-          What we build
-        </p>
-        <h2 className="mb-6 max-w-[18ch] text-[clamp(2rem,5vw,3.5rem)] font-semibold leading-tight text-white">
-          Fixed, refined and ready —
-          <span className="text-[#ff5d3b]"> straight out of the build.</span>
-        </h2>
-        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/55">
-          {services.map((s) => (
-            <span key={s.id} className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#ff5d3b]" />
-              {s.title}
-            </span>
-          ))}
-        </div>
-      </motion.div>
-    </section>
-  );
-}
-
+/* ------------------------------------------------------------ Projects --- */
 function Projects() {
-  // duplicated list for a seamless marquee
+  // single source array, looped for a seamless marquee
   const row = [...projects, ...projects];
   return (
     <section className="flex min-h-screen w-full flex-col justify-center overflow-hidden py-24">
@@ -163,7 +277,7 @@ function Projects() {
           Selected work
         </p>
         <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-semibold text-white">
-          Things we&apos;ve shipped.
+          Outcomes we&apos;ve shipped.
         </h2>
       </motion.div>
 
@@ -209,19 +323,28 @@ function Projects() {
             Let&apos;s connect
           </p>
           <h2 className="text-[clamp(2rem,6vw,4rem)] font-semibold leading-none text-white">
-            Let&apos;s build yours.
+            Tell us what you&apos;re building.
           </h2>
-          <p className="mb-7 mt-4 max-w-[40ch] text-white/55">{company.about}</p>
+          <p className="mb-7 mt-4 max-w-[46ch] text-white/55">
+            {company.about} Drop your email — we reply within one business day.
+          </p>
           <ConnectForm />
         </div>
         <div className="flex flex-col gap-2 text-sm text-white/60 md:text-right">
           <a href={`mailto:${company.email}`} className="hover:text-[#ff5d3b]">
             {company.email}
           </a>
-          <a href={`tel:${company.phone}`} className="hover:text-[#ff5d3b]">
+          <a href={`tel:${company.phoneHref}`} className="hover:text-[#ff5d3b]">
             {company.phone}
           </a>
-          <span className="text-white/30">WhatsApp {company.whatsapp}</span>
+          <a
+            href={`https://wa.me/${company.whatsappHref}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[#ff5d3b]"
+          >
+            WhatsApp {company.whatsapp}
+          </a>
         </div>
       </motion.div>
 
@@ -232,27 +355,7 @@ function Projects() {
   );
 }
 
-function Team() {
-  return (
-    <section className="flex h-screen w-full flex-col justify-end px-[8vw] pb-24">
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.5 }}
-      >
-        <p className="mb-2 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]">
-          The team
-        </p>
-        <h2 className="max-w-[20ch] text-[clamp(1.8rem,5vw,3.2rem)] font-semibold leading-tight text-white">
-          Things break. Our developers ship the fix —
-          <span className="text-[#ff5d3b]"> every single time.</span>
-        </h2>
-      </motion.div>
-    </section>
-  );
-}
-
+/* ----------------------------------------------------------- Overlay --- */
 export default function Overlay() {
   return (
     <div className="w-screen text-white">
@@ -260,6 +363,7 @@ export default function Overlay() {
       <Transition />
       <Team />
       <Services />
+      <Testimonials />
       <Projects />
     </div>
   );

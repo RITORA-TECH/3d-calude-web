@@ -5,6 +5,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 import Overlay from "@/components/Sections";
 import Loader from "@/components/Loader";
 import ConnectBubble from "@/components/ConnectBubble";
+import AgentChat from "@/components/AgentChat";
 
 // WebGL must only run on the client
 const Experience = dynamic(() => import("@/components/Experience"), {
@@ -21,13 +22,16 @@ export default function Home() {
         <Experience />
       </div>
 
-      {/* AI-agent bubble (clickable, above everything) */}
+      {/* AI-agent intro bubble (opens the chat) */}
       <ConnectBubble />
 
       {/* scrolling content on top */}
       <main className="relative z-10">
         <Overlay />
       </main>
+
+      {/* real conversational AI agent (floating launcher + chat panel) */}
+      <AgentChat />
     </SmoothScroll>
   );
 }

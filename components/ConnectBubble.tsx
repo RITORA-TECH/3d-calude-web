@@ -32,9 +32,7 @@ export default function ConnectBubble() {
     <div className="pointer-events-none fixed right-[6vw] top-[20vh] z-30 md:right-[16vw] md:top-[33vh]">
       <div ref={ref} style={{ transition: "opacity .25s" }} className="w-56 md:w-64">
         <button
-          onClick={() =>
-            window.dispatchEvent(new CustomEvent("ritora:connect"))
-          }
+          onClick={() => window.dispatchEvent(new CustomEvent("ritora:chat"))}
           className="group relative block w-full rounded-2xl border border-white/15 bg-[#0b1020]/90 px-5 py-4 text-left shadow-2xl backdrop-blur-md transition-transform hover:scale-[1.03]"
         >
           <div className="mb-1 text-[10px] uppercase tracking-[0.3em] text-[#ff5d3b]">

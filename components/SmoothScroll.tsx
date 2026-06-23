@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
 import { scrollState } from "@/lib/scroll";
+import { prefersReducedMotion } from "@/lib/motion";
 
 export default function SmoothScroll({
   children,
@@ -10,9 +11,11 @@ export default function SmoothScroll({
   children: React.ReactNode;
 }) {
   useEffect(() => {
+    const reduce = prefersReducedMotion();
     const lenis = new Lenis({
-      duration: 1.15,
-      smoothWheel: true,
+      // reduced-motion: effectively native, instant scrolling
+      duration: reduce ? 0 : 1.15,
+      smoothWheel: !reduce,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     });
 
