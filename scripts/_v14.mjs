@@ -1,0 +1,10 @@
+import puppeteer from "puppeteer-core";
+const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const OUT="/private/tmp/claude-501/-Users-dinesh-Documents-GitHub-ritora-3d-calude-web/b4fd875e-c9c5-4dc7-92c8-c7f246aa9fa2/scratchpad";
+const b=await puppeteer.launch({executablePath:CHROME,headless:"new",args:["--no-sandbox","--ignore-gpu-blocklist","--enable-webgl","--use-gl=angle","--use-angle=swiftshader"]});
+const p=await b.newPage();
+await p.setViewport({width:820,height:560,deviceScaleFactor:1.5});
+await p.goto("http://localhost:3000/",{waitUntil:"domcontentloaded",timeout:60000});
+await new Promise(r=>setTimeout(r,5000));
+await p.screenshot({path:`${OUT}/hero-820.png`});
+await b.close();console.log("done");

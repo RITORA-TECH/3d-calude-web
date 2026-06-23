@@ -23,7 +23,7 @@ import {
 /* ---------------------------------------------------------------- Hero --- */
 function Hero() {
   return (
-    <section className="relative flex h-screen w-full flex-col justify-end pb-28 px-[8vw] md:justify-center md:pb-0">
+    <section className="relative flex min-h-screen w-full flex-col justify-end px-[8vw] pb-28 pt-28 md:justify-center md:pb-20">
       <div className="max-w-[46ch]">
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -37,7 +37,7 @@ function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.45 }}
-          className="max-w-[16ch] text-[clamp(2.6rem,8vw,6.2rem)] font-semibold leading-[0.98] tracking-tight text-white"
+          className="max-w-[16ch] text-[clamp(2.2rem,7.5vw,6.2rem)] font-semibold leading-[0.98] tracking-tight text-white"
         >
           {company.headline}
         </motion.h1>

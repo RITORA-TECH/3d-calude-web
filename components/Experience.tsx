@@ -106,9 +106,10 @@ function Stage() {
     const p = scrollState.progress;
 
     /* ---- phase scalars (Hero / Transition / Team / Services / Projects) ---- */
-    const approach = smooth(0.045, 0.15, p); // deliberate step-by-step walk to the car
-    const arrive = smooth(0.15, 0.165, p); // brief pause at the door
-    const enter = smooth(0.165, 0.21, p); // climb into the seat
+    const approach = smooth(0.045, 0.14, p); // deliberate step-by-step walk to the car
+    const arrive = smooth(0.14, 0.16, p); // brief crouch/pause beside the car
+    const jump = smooth(0.16, 0.205, p); // leap up and into the cockpit
+    const enter = jump; // position lerp follows the jump
     const drive = smooth(0.22, 0.34, p);
     const air = clamp01((p - 0.34) / 0.1); // hero airborne
     const flipSpin = smooth(0.34, 0.46, p);
@@ -123,34 +124,38 @@ function Stage() {
     const ringT = clamp01((p - 0.345) / 0.12);
     const hostIn = smooth(0.88, 0.95, p); // agent returns to say hello
 
-    /* ---- WALKER (arriving agent: greets, walks up step-by-step, climbs in) ---- */
+    /* ---- WALKER (greets, walks up step-by-step, then JUMPS into the cockpit) ---- */
     if (walker.current) {
-      const vis = p < 0.222;
+      const vis = p < 0.214;
       walker.current.visible = vis;
       if (vis) {
-        // greet → walk (step by step) → pause at the door → climb into the seat
+        // greet → walk (step by step) → crouch → JUMP in → settle into the seat
         walkerAct.current =
-          enter > 0.03
-            ? "Sitting" // climbing into / settling in the seat
-            : arrive > 0.5
-              ? "Standing" // brief beat at the door before getting in
-              : approach > 0.02
-                ? "Walking" // deliberate steps toward the car
-                : "Wave"; // initial greeting
-        // a longer, straighter path so the steps read clearly
-        const baseX = lerp(4.4, -1.05, approach);
-        const baseZ = lerp(1.15, 1.1, approach);
+          jump > 0.92
+            ? "Sitting" // landed & settling into the seat
+            : jump > 0.04
+              ? "Jump" // the actual leap into the car
+              : arrive > 0.4
+                ? "Standing" // brief beat / crouch beside the car
+                : approach > 0.02
+                  ? "Walking" // deliberate steps toward the car
+                  : "Wave"; // initial greeting
+        // walk a longer, straighter path so the steps read clearly…
+        const doorX = lerp(4.4, -1.05, approach);
+        const doorZ = lerp(1.15, 1.1, approach);
+        // …then a parabolic hop from beside the car up & over into the seat
+        const hop = Math.sin(Math.PI * jump) * 0.9; // peak jump height
         walker.current.position.set(
-          lerp(baseX, SEAT.x, enter),
-          lerp(0, SEAT.y, enter),
-          lerp(baseZ, SEAT.z, enter)
+          lerp(doorX, SEAT.x, jump),
+          lerp(0, SEAT.y, jump) + hop,
+          lerp(doorZ, SEAT.z, jump)
         );
         walker.current.rotation.y = lerp(
           lerp(0.35, -Math.PI / 2, approach), // turn to face the car, then walk
-          Math.PI, // rotate into the seat
-          enter
+          Math.PI, // rotate into the seat as it lands
+          jump
         );
-        walker.current.scale.setScalar(lerp(0.42, 0.28, enter));
+        walker.current.scale.setScalar(lerp(0.42, 0.28, jump));
       }
     }
 
