@@ -275,7 +275,7 @@ function Projects() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.4 }}
-        className="mt-24 flex scroll-mt-24 flex-col items-start gap-10 px-[8vw] md:flex-row md:justify-between"
+        className="mt-24 flex scroll-mt-24 flex-col items-start gap-10 px-[8vw] md:flex-row md:items-end md:justify-between"
       >
         <div className="max-w-xl">
           <p className="mb-2 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]">
