@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import {
   company,
   services,
-  projects,
   narrative,
   clientsLine,
   techStack,
@@ -13,12 +12,19 @@ import {
   team,
 } from "@/lib/content";
 import { fadeUp } from "@/lib/motion";
+import {
+  MailIcon,
+  PhoneIcon,
+  WhatsAppIcon,
+  InstagramIcon,
+  YouTubeIcon,
+} from "./Icons";
 
 /* ---------------------------------------------------------------- Hero --- */
 function Hero() {
   return (
     <section className="relative flex h-screen w-full flex-col justify-end pb-28 px-[8vw] md:justify-center md:pb-0">
-      <div className="text-scrim max-w-[46ch]">
+      <div className="max-w-[46ch]">
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -67,7 +73,7 @@ function Transition() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.6 }}
-        className="text-scrim max-w-[20ch] text-right text-[clamp(1.8rem,5vw,3.4rem)] font-medium leading-tight text-white/90"
+        className="max-w-[20ch] text-right text-[clamp(1.8rem,5vw,3.4rem)] font-medium leading-tight text-white/90"
       >
         {narrative[0]}
       </motion.h2>
@@ -107,7 +113,6 @@ function Team() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.4 }}
-        className="text-scrim"
       >
         <p className="mb-2 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]">
           One team, the whole stack
@@ -131,7 +136,6 @@ function Services() {
         initial="hidden"
         whileInView="show"
         viewport={{ once: true, amount: 0.3 }}
-        className="text-scrim"
       >
         <p className="mb-2 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]">
           What we build
@@ -260,55 +264,10 @@ function ConnectForm() {
   );
 }
 
-/* ------------------------------------------------------------ Projects --- */
+/* ------------------------------------------------------------ Contact --- */
 function Projects() {
-  // single source array, looped for a seamless marquee
-  const row = [...projects, ...projects];
   return (
     <section className="flex min-h-screen w-full flex-col justify-center overflow-hidden py-24">
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.5 }}
-        className="mb-14 px-[8vw]"
-      >
-        <p className="mb-2 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]">
-          Selected work
-        </p>
-        <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-semibold text-white">
-          Outcomes we&apos;ve shipped.
-        </h2>
-      </motion.div>
-
-      <div className="relative w-full">
-        <div className="flex w-max animate-[marquee_38s_linear_infinite] gap-6 px-[8vw] hover:[animation-play-state:paused]">
-          {row.map((p, i) => (
-            <article
-              key={i}
-              className="group relative h-72 w-80 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-[#0a0e1c] p-7"
-            >
-              <div
-                className="absolute -right-16 -top-16 h-44 w-44 rounded-full opacity-25 blur-2xl transition-opacity duration-500 group-hover:opacity-60"
-                style={{ background: p.accent }}
-              />
-              <div className="relative flex h-full flex-col justify-between">
-                <div>
-                  <span
-                    className="text-xs font-semibold uppercase tracking-[0.25em]"
-                    style={{ color: p.accent }}
-                  >
-                    {p.category}
-                  </span>
-                  <h3 className="mt-4 text-2xl font-semibold text-white">{p.title}</h3>
-                </div>
-                <p className="text-sm leading-relaxed text-white/55">{p.description}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-
       {/* contact */}
       <motion.div
         id="contact"
@@ -330,21 +289,50 @@ function Projects() {
           </p>
           <ConnectForm />
         </div>
-        <div className="flex flex-col gap-2 text-sm text-white/60 md:text-right">
-          <a href={`mailto:${company.email}`} className="hover:text-[#ff5d3b]">
-            {company.email}
-          </a>
-          <a href={`tel:${company.phoneHref}`} className="hover:text-[#ff5d3b]">
-            {company.phone}
-          </a>
-          <a
-            href={`https://wa.me/${company.whatsappHref}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-[#ff5d3b]"
-          >
-            WhatsApp {company.whatsapp}
-          </a>
+        <div className="flex flex-wrap gap-2.5 md:justify-end">
+          {[
+            {
+              href: `mailto:${company.email}`,
+              label: `Email ${company.email}`,
+              icon: <MailIcon className="h-[18px] w-[18px]" />,
+              external: false,
+            },
+            {
+              href: `tel:${company.phoneHref}`,
+              label: `Call ${company.phone}`,
+              icon: <PhoneIcon className="h-[18px] w-[18px]" />,
+              external: false,
+            },
+            {
+              href: `https://wa.me/${company.whatsappHref}`,
+              label: `WhatsApp ${company.whatsapp}`,
+              icon: <WhatsAppIcon className="h-[18px] w-[18px]" />,
+              external: true,
+            },
+            {
+              href: company.instagram,
+              label: "Ritora on Instagram",
+              icon: <InstagramIcon className="h-[18px] w-[18px]" />,
+              external: true,
+            },
+            {
+              href: company.youtube,
+              label: "Ritora on YouTube",
+              icon: <YouTubeIcon className="h-[18px] w-[18px]" />,
+              external: true,
+            },
+          ].map((c) => (
+            <a
+              key={c.label}
+              href={c.href}
+              aria-label={c.label}
+              title={c.label}
+              {...(c.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/12 text-white/70 transition-colors hover:border-[#ff5d3b] hover:text-[#ff5d3b]"
+            >
+              {c.icon}
+            </a>
+          ))}
         </div>
       </motion.div>
 

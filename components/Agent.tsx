@@ -1,12 +1,13 @@
 "use client";
 
 import { useMemo, useRef } from "react";
-import { useGLTF, useAnimations } from "@react-three/drei";
+import { useGLTF, useAnimations, useTexture } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { SkeletonUtils } from "three-stdlib";
 
 useGLTF.preload("/models/RobotExpressive/RobotExpressive.glb");
+useTexture.preload("/ritora-symbol.png");
 
 // only the seated pose should freeze on its last frame; everything else loops
 const ONCE = new Set(["Sitting"]);
@@ -48,6 +49,34 @@ export default function Agent({ actionRef, color }: Props) {
     return c;
   }, [scene, color]);
 
+  // Circular Ritora "R" badge centered on the chest, facing forward (+Z).
+  // Anchored to the Torso mesh's own bounds so it lands correctly on every
+  // crew member regardless of their group scale.
+  const logoTex = useTexture("/ritora-symbol.png");
+  const chest = useMemo(() => {
+    logoTex.colorSpace = THREE.SRGBColorSpace;
+    logoTex.anisotropy = 8;
+    cloned.updateWorldMatrix(true, true);
+    const torso = cloned.getObjectByName("Torso") as THREE.Mesh | null;
+    const tbox = new THREE.Box3();
+    if (torso?.geometry) {
+      torso.geometry.computeBoundingBox();
+      tbox.copy(torso.geometry.boundingBox!).applyMatrix4(torso.matrixWorld);
+    } else if (torso) {
+      tbox.setFromObject(torso);
+    } else {
+      tbox.setFromObject(cloned);
+    }
+    const size = tbox.getSize(new THREE.Vector3());
+    const center = tbox.getCenter(new THREE.Vector3());
+    const r = size.x * 0.3;
+    return {
+      // middle of the chest, sitting just proud of the front surface
+      position: [center.x, center.y, tbox.max.z + r * 0.04] as [number, number, number],
+      radius: r,
+    };
+  }, [cloned, logoTex]);
+
   const { actions } = useAnimations(animations, group);
   const current = useRef("");
 
@@ -72,6 +101,22 @@ export default function Agent({ actionRef, color }: Props) {
   return (
     <group ref={group}>
       <primitive object={cloned} />
+
+      {/* circular chest badge: accent ring · dark disc · "R" symbol */}
+      <group position={chest.position}>
+        <mesh>
+          <circleGeometry args={[chest.radius * 1.12, 56]} />
+          <meshStandardMaterial color="#ff5d3b" roughness={0.5} metalness={0.1} emissive="#ff5d3b" emissiveIntensity={0.25} />
+        </mesh>
+        <mesh position={[0, 0, chest.radius * 0.01]}>
+          <circleGeometry args={[chest.radius, 56]} />
+          <meshStandardMaterial color="#0a0c16" roughness={0.45} metalness={0.3} />
+        </mesh>
+        <mesh position={[0, 0, chest.radius * 0.02]} renderOrder={2}>
+          <planeGeometry args={[chest.radius * 1.7, chest.radius * 1.7]} />
+          <meshBasicMaterial map={logoTex} transparent alphaTest={0.3} depthWrite={false} toneMapped={false} />
+        </mesh>
+      </group>
     </group>
   );
 }

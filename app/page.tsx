@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import SmoothScroll from "@/components/SmoothScroll";
 import Overlay from "@/components/Sections";
 import Loader from "@/components/Loader";
+import Brand from "@/components/Brand";
 import ConnectBubble from "@/components/ConnectBubble";
 import AgentChat from "@/components/AgentChat";
 
@@ -16,6 +17,9 @@ export default function Home() {
   return (
     <SmoothScroll>
       <Loader />
+
+      {/* brand mark / logo */}
+      <Brand />
 
       {/* fixed 3D layer behind the content */}
       <div className="pointer-events-none fixed inset-0 z-0">

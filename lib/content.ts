@@ -25,11 +25,14 @@ export const company = {
 
   experience: "5+ years across cloud solutions & full-stack development",
 
-  email: "hello@ritoratech.com",
-  phone: "+1 656 204 4178", // display
-  phoneHref: "+16562044178", // tel: (digits only, no spaces)
-  whatsapp: "+1 656 204 4178",
-  whatsappHref: "16562044178", // wa.me format
+  email: "ritoratechnologies@gmail.com",
+  phone: "+91 93815 16771", // display
+  phoneHref: "+919381516771", // tel: (digits only, no spaces)
+  whatsapp: "+91 93815 16771",
+  whatsappHref: "919381516771", // wa.me format
+  // TODO(team): drop in the real Instagram / YouTube URLs when available.
+  instagram: "#",
+  youtube: "#",
   replyTime: "We reply within one business day.",
   year: 2026,
 };
