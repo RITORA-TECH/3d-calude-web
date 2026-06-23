@@ -68,6 +68,44 @@ function useDebris(count = 60) {
   }, [count]);
 }
 
+/* ---------- rising smoke plumes ---------- */
+function useSmoke(count = 18) {
+  return useMemo(() => {
+    return Array.from({ length: count }, () => {
+      const a = Math.random() * Math.PI * 2;
+      const r = Math.random();
+      return {
+        dir: new THREE.Vector3(
+          Math.cos(a) * r,
+          0.6 + Math.random() * 1.0,
+          Math.sin(a) * r
+        ),
+        speed: 1.2 + Math.random() * 2.4,
+        size: 0.8 + Math.random() * 1.8,
+      };
+    });
+  }, [count]);
+}
+
+/* ---------- flickering electric arcs ---------- */
+function useArcs(count = 10) {
+  return useMemo(() => {
+    return Array.from({ length: count }, () => ({
+      pos: [
+        (Math.random() - 0.5) * 2.6,
+        0.4 + Math.random() * 1.9,
+        (Math.random() - 0.5) * 2.6,
+      ] as [number, number, number],
+      rot: [
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+      ] as [number, number, number],
+      len: 0.6 + Math.random() * 1.6,
+    }));
+  }, [count]);
+}
+
 function Stage() {
   const { camera, size } = useThree();
   const reduceMotion = useRef(prefersReducedMotion());
@@ -85,6 +123,8 @@ function Stage() {
   const enemy = useRef<THREE.Group>(null!);
   const heroRoll = useRef(0);
   const enemyRoll = useRef(0);
+  const heroExplode = useRef(0); // 0 whole .. 1 blown apart
+  const enemyFade = useRef(1); // 1 visible .. 0 dissolved
 
   const flash = useRef<THREE.Mesh>(null!);
   const flashMat = useRef<THREE.MeshBasicMaterial>(null!);
@@ -92,7 +132,11 @@ function Stage() {
   const ring = useRef<THREE.Mesh>(null!);
   const ringMat = useRef<THREE.MeshBasicMaterial>(null!);
   const debrisGroup = useRef<THREE.Group>(null!);
-  const debris = useDebris();
+  const debris = useDebris(110);
+  const smokeGroup = useRef<THREE.Group>(null!);
+  const smoke = useSmoke();
+  const arcsGroup = useRef<THREE.Group>(null!);
+  const arcs = useArcs();
 
   const devRefs = useRef<THREE.Group[]>([]);
   const devActs = useRef(DEVS.map(() => ({ current: "Idle" })));
@@ -111,15 +155,11 @@ function Stage() {
     const jump = smooth(0.16, 0.205, p); // leap up and into the cockpit
     const enter = jump; // position lerp follows the jump
     const drive = smooth(0.22, 0.34, p);
-    const air = clamp01((p - 0.34) / 0.1); // hero airborne
-    const flipSpin = smooth(0.34, 0.46, p);
     const landed = smooth(0.44, 0.5, p);
     const knock = smooth(0.36, 0.46, p);
     const reassemble = smooth(0.55, 0.64, p); // pieces fly back, car repaired
     const devIn = smooth(0.46, 0.54, p);
     const devOut = smooth(0.66, 0.72, p);
-    const carsAway = smooth(0.9, 0.97, p);
-    const end = smooth(0.92, 1, p);
     const impulse = smooth(0.34, 0.365, p) * (1 - smooth(0.38, 0.46, p));
     const ringT = clamp01((p - 0.345) / 0.12);
     const hostIn = smooth(0.88, 0.95, p); // agent returns to say hello
@@ -159,56 +199,58 @@ function Stage() {
       }
     }
 
-    /* ---- DRIVER (seated in the cockpit; revealed as the climb-in finishes) -- */
+    /* ---- DRIVER (seated in the cockpit; ejects when the car shatters) -- */
     if (driver.current) {
-      driver.current.visible = p > 0.205;
+      driver.current.visible = p > 0.205 && p < 0.35;
       driverAct.current = "Sitting";
     }
 
-    /* ---- HERO CAR (red) — dashes forward, flies, tumbles, repaired, leaves ---- */
+    /* ---- HERO CAR (red) — dashes in, SHATTERS into parts, gets rebuilt ---- */
     if (hero.current) {
       let hx = lerp(-1.5, 0.6, drive);
-      hx = lerp(hx, HERO_LAND, knock);
-      hx = lerp(hx, -26, carsAway);
-      const hy = 3.7 * Math.sin(Math.PI * air);
-      hero.current.position.set(hx, hy, 0);
-
-      let rz = flipSpin * Math.PI * 4; // two barrel rolls → lands upright
-      rz = lerp(rz, 0.18, landed);
-      rz = lerp(rz, 0, reassemble); // un-tilts as the crew reassembles it
-      hero.current.rotation.set(0, HERO_YAW, rz);
-
-      const moving = (drive > 0.02 && drive < 0.98) || carsAway > 0.02;
+      hx = lerp(hx, HERO_LAND, knock); // recoils to its resting wreck spot
+      hero.current.position.set(hx, 0, 0);
+      hero.current.rotation.set(0, HERO_YAW, 0); // stays grounded & upright
+      const moving = drive > 0.02 && drive < 0.9;
       heroRoll.current = moving ? 20 : 0;
+      // blow the car into parts at impact, hold, then re-seat them as the crew rebuilds
+      heroExplode.current = smooth(0.345, 0.4, p) * (1 - reassemble);
     }
 
-    /* ---- ENEMY CAR (silver) — dashes the other way, head-on ---- */
+    /* ---- ENEMY CAR (silver) — dashes in, stays wrecked on the ground, dissolves ---- */
     if (enemy.current) {
       let ex = lerp(16, 3.4, drive);
-      ex = lerp(ex, 6.4, knock);
-      ex = lerp(ex, 26, carsAway);
-      const ey = 1.1 * Math.sin(Math.PI * clamp01((p - 0.35) / 0.09));
-      enemy.current.position.set(ex, ey, 0);
-      const erz = Math.sin(flipSpin * Math.PI * 2) * 0.5 * (1 - reassemble);
-      enemy.current.rotation.set(0, ENEMY_YAW, erz);
-
-      const moving = (drive > 0.02 && drive < 0.98) || carsAway > 0.02;
+      ex = lerp(ex, 5.2, knock); // bounces back a little, then sits still
+      enemy.current.position.set(ex, 0, 0);
+      enemy.current.rotation.set(0, ENEMY_YAW, 0.16 * landed); // tilted = damaged
+      const moving = drive > 0.02 && drive < 0.9;
       enemyRoll.current = moving ? 22 : 0;
+      // the totalled car fades out near the end
+      enemyFade.current = 1 - smooth(0.86, 0.93, p);
     }
 
     /* ---- EXPLOSIVE IMPACT: flash + light + shockwave ---- */
     if (flash.current && flashMat.current) {
       flash.current.position.copy(IMPACT);
-      flash.current.scale.setScalar(0.1 + impulse * 3.0);
-      flashMat.current.opacity = impulse * 0.7;
+      flash.current.scale.setScalar(0.1 + impulse * 4.6);
+      flashMat.current.opacity = impulse * 0.8;
     }
     if (flashLight.current) flashLight.current.intensity = impulse * 120;
     if (ring.current && ringMat.current) {
       const show = ringT > 0 && ringT < 1;
       ring.current.visible = show;
       if (show) {
-        ring.current.scale.setScalar(0.3 + ringT * 8);
-        ringMat.current.opacity = (1 - ringT) * 0.6;
+        ring.current.scale.setScalar(0.3 + ringT * 13);
+        ringMat.current.opacity = (1 - ringT) * 0.7;
+      }
+    }
+
+    // electric arcs flicker at the moment of impact
+    if (arcsGroup.current) {
+      const live = impulse > 0.02 && !reduceMotion.current;
+      arcsGroup.current.visible = live;
+      if (live) {
+        for (const c of arcsGroup.current.children) c.visible = Math.random() > 0.45;
       }
     }
 
@@ -228,6 +270,27 @@ function Stage() {
           );
           child.rotation.set(d.spin.x * tt, d.spin.y * tt, d.spin.z * tt);
           child.scale.setScalar(Math.max(0.001, (1 - t) * d.size));
+        });
+      }
+    }
+
+    /* ---- SMOKE plumes billowing up from the wreck ---- */
+    if (smokeGroup.current) {
+      const t = clamp01((p - 0.345) / 0.24); // lingers past the debris
+      const live = t > 0 && t < 1;
+      smokeGroup.current.visible = live;
+      if (live) {
+        smokeGroup.current.children.forEach((child, i) => {
+          const s = smoke[i];
+          const tt = t * 2.4;
+          child.position.set(
+            IMPACT.x + s.dir.x * s.speed * tt,
+            Math.max(0.1, IMPACT.y + s.dir.y * s.speed * tt),
+            IMPACT.z + s.dir.z * s.speed * tt
+          );
+          child.scale.setScalar(s.size * (0.4 + t * 1.8));
+          const m = (child as THREE.Mesh).material as THREE.MeshBasicMaterial;
+          m.opacity = Math.sin(Math.PI * t) * 0.45;
         });
       }
     }
@@ -282,10 +345,24 @@ function Stage() {
     cl.lerp(V(-1, 1, 0), smooth(0.62, 0.72, p));
     cl.lerp(V(2.3, 1.4, 4.6), smooth(0.86, 0.97, p)); // look at the host
 
+    // ---- 360° orbit around the shattering car (cinematic) ----
+    const airOrbit = smooth(0.345, 0.52, p); // progress across the shatter beat
+    const orbitWin =
+      clamp01((p - 0.345) / 0.015) * (1 - clamp01((p - 0.52) / 0.03));
+    if (orbitWin > 0.001 && !reduceMotion.current) {
+      const ang = -Math.PI * 0.35 + airOrbit * Math.PI * 2.2; // ~1.1 revolutions
+      const orbR = 8;
+      _orbA.set(Math.cos(ang) * orbR, 3.6, Math.sin(ang) * orbR);
+      _orbB.set(0.5, 1.4, 0); // look at the wreck on the ground
+      cp.lerp(_orbA, orbitWin);
+      cl.lerp(_orbB, orbitWin);
+    }
+
     // camera shake is involuntary motion — skip it under reduced-motion
     if (impulse > 0.001 && !reduceMotion.current) {
-      cp.x += (Math.random() - 0.5) * impulse * 1.4;
-      cp.y += (Math.random() - 0.5) * impulse * 1.0;
+      cp.x += (Math.random() - 0.5) * impulse * 2.4;
+      cp.y += (Math.random() - 0.5) * impulse * 1.7;
+      cp.z += (Math.random() - 0.5) * impulse * 1.6;
     }
 
     // responsive: dolly back on narrow / portrait viewports so the whole
@@ -331,7 +408,7 @@ function Stage() {
 
       {/* hero car + seated agent */}
       <group ref={hero}>
-        <Ferrari color="#c81e2a" rollRef={heroRoll} />
+        <Ferrari color="#c81e2a" rollRef={heroRoll} explodeRef={heroExplode} />
         <group ref={driver} position={[-0.32, 0.24, -0.15]} rotation={[0, Math.PI, 0]} scale={0.28}>
           <Agent actionRef={driverAct} color="#ff7a45" />
         </group>
@@ -339,7 +416,7 @@ function Stage() {
 
       {/* oncoming car */}
       <group ref={enemy}>
-        <Ferrari color="#aeb6c2" rollRef={enemyRoll} />
+        <Ferrari color="#aeb6c2" rollRef={enemyRoll} fadeRef={enemyFade} />
       </group>
 
       {/* dev crew (coloured per discipline) */}
@@ -374,6 +451,26 @@ function Stage() {
         <ringGeometry args={[0.85, 1, 48]} />
         <meshBasicMaterial ref={ringMat} color="#ffb066" transparent opacity={0} toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
+
+      {/* rising smoke plumes */}
+      <group ref={smokeGroup} visible={false}>
+        {smoke.map((_, i) => (
+          <mesh key={i}>
+            <sphereGeometry args={[1, 12, 12]} />
+            <meshBasicMaterial color="#171a24" transparent opacity={0} depthWrite={false} />
+          </mesh>
+        ))}
+      </group>
+
+      {/* electric arcs at the impact */}
+      <group ref={arcsGroup} position={IMPACT} visible={false}>
+        {arcs.map((a, i) => (
+          <mesh key={i} position={a.pos} rotation={a.rot} scale={[0.03, a.len, 0.03]}>
+            <boxGeometry args={[1, 1, 1]} />
+            <meshBasicMaterial color="#a8e0ff" toneMapped={false} />
+          </mesh>
+        ))}
+      </group>
 
       {/* debris */}
       <group ref={debrisGroup} visible={false}>
@@ -425,6 +522,9 @@ const _v = new THREE.Vector3();
 function V(x: number, y: number, z: number) {
   return _v.set(x, y, z);
 }
+// dedicated temps for the orbit camera (must not alias the shared _v)
+const _orbA = new THREE.Vector3();
+const _orbB = new THREE.Vector3();
 
 export default function Experience() {
   return (
