@@ -69,7 +69,8 @@ export default function Agent({ actionRef, color }: Props) {
     }
     const size = tbox.getSize(new THREE.Vector3());
     const center = tbox.getCenter(new THREE.Vector3());
-    const r = size.x * 0.3;
+    // small emblem — roughly a tenth of the chest width, centered
+    const r = size.x * 0.11;
     return {
       // middle of the chest, sitting just proud of the front surface
       position: [center.x, center.y, tbox.max.z + r * 0.04] as [number, number, number],
