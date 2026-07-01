@@ -13,9 +13,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// TODO(team): point SITE_URL at the real production domain once it's live —
-// it drives the canonical URL, sitemap, robots.txt and social-card URLs.
-export const SITE_URL = "https://ritoratech.com";
+// Drives canonical URL, sitemap, robots.txt, Open Graph, and JSON-LD URLs.
+export const SITE_URL = "https://ritoratechnologies.com";
 const title = `${company.name} — ${company.tagline}`;
 const description =
   "Ritora Technologies is a full-stack software development company building " +
