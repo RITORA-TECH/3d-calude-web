@@ -337,7 +337,12 @@ function Projects() {
       </motion.div>
 
       <div className="mt-16 border-t border-white/10 px-[8vw] pt-6 text-xs text-white/30">
-        © {company.year} {company.name}. All rights reserved.
+        <p>
+          © {company.year} {company.name}. All rights reserved.
+        </p>
+        <p className="mt-1 text-white/25">
+          {company.name} · ritoratechnologies.com
+        </p>
       </div>
     </section>
   );

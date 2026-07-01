@@ -25,7 +25,7 @@ const description =
 // Relevant, non-spammy keyword set spanning the studio's actual capabilities.
 const keywords = [
   company.name,
-  "Ritora",
+  ...company.alternateNames,
   "software development company",
   "software studio",
   "custom software development",
@@ -124,7 +124,7 @@ const jsonLd = {
       "@type": ["Organization", "ProfessionalService"],
       "@id": `${SITE_URL}/#organization`,
       name: company.name,
-      alternateName: company.shortName,
+      alternateName: [...company.alternateNames],
       url: SITE_URL,
       logo: `${SITE_URL}/icon.png`,
       image: `${SITE_URL}/og.png`,
@@ -154,6 +154,7 @@ const jsonLd = {
       "@id": `${SITE_URL}/#website`,
       url: SITE_URL,
       name: company.name,
+      alternateName: [...company.alternateNames],
       description,
       publisher: { "@id": `${SITE_URL}/#organization` },
       inLanguage: "en",

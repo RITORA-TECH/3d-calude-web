@@ -4,6 +4,8 @@
 export const company = {
   name: "Ritora Technologies",
   shortName: "Ritora",
+  /** Brand spellings Google should associate with this site (schema + meta). */
+  alternateNames: ["Ritora", "ritoratechnologies", "RitoraTechnologies"] as const,
 
   // TODO(team): confirm primary market & phone country. The number below is a
   // +1 (US) line — if the studio is India-based, a local +91 number usually
@@ -11,7 +13,7 @@ export const company = {
   location: "India → worldwide",
 
   // hero
-  eyebrow: "Software studio · India → worldwide",
+  eyebrow: "Ritora Technologies · India → worldwide",
   headline: "We build software that survives production.",
   sub: "A cross-functional team shipping web, mobile, cloud and AI products — from idea to scale — for startups and enterprises.",
   scrollCue: "Scroll to meet our agent",
@@ -21,7 +23,7 @@ export const company = {
   hero: "A cross-functional team shipping web, mobile, cloud and AI products — from idea to scale — for startups and enterprises.",
 
   about:
-    "Ritora is a cross-functional team building scalable, cloud-native products with modern frontends, robust backends and AI built in.",
+    "Ritora Technologies is a cross-functional team building scalable, cloud-native products with modern frontends, robust backends and AI built in.",
 
   experience: "5+ years across cloud solutions & full-stack development",
 
@@ -31,8 +33,8 @@ export const company = {
   whatsapp: "+91 93815 16771",
   whatsappHref: "919381516771", // wa.me format
   // TODO(team): drop in the real Instagram / YouTube URLs when available.
-  instagram: "#",
-  youtube: "#",
+  instagram: "https://www.instagram.com/ritoratechnologies?utm_source=qr&igsh=dDVmZ3BkMWk1M3Rz",
+  youtube: "https://www.youtube.com/@RitoraTechnologies",
   replyTime: "We reply within one business day.",
   year: 2026,
 };
