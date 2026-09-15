@@ -526,12 +526,14 @@ function V(x: number, y: number, z: number) {
 const _orbA = new THREE.Vector3();
 const _orbB = new THREE.Vector3();
 
-export default function Experience() {
+export default function Experience({ paused = false }: { paused?: boolean }) {
   return (
     <Canvas
       shadows
-      dpr={[1, 2]}
-      gl={{ antialias: true, powerPreference: "high-performance" }}
+      dpr={[1, 1.5]}
+      frameloop={paused ? "never" : "always"}
+      gl={{ antialias: true, powerPreference: "default" }}
+      fallback={null}
       camera={{ position: [7, 2.4, 9], fov: 38, near: 0.1, far: 100 }}
     >
       <color attach="background" args={["#05070f"]} />

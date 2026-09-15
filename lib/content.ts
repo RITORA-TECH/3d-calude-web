@@ -7,16 +7,13 @@ export const company = {
   /** Brand spellings Google should associate with this site (schema + meta). */
   alternateNames: ["Ritora", "ritoratechnologies", "RitoraTechnologies"] as const,
 
-  // TODO(team): confirm primary market & phone country. The number below is a
-  // +1 (US) line — if the studio is India-based, a local +91 number usually
-  // reads as more trustworthy to domestic buyers.
   location: "India → worldwide",
 
   // hero
   eyebrow: "Ritora Technologies · India → worldwide",
   headline: "We build software that survives production.",
   sub: "A cross-functional team shipping web, mobile, cloud and AI products — from idea to scale — for startups and enterprises.",
-  scrollCue: "Scroll to meet our agent",
+  scrollCue: "Explore our services",
 
   // short line reused in meta / loader
   tagline: "Software that survives production.",
@@ -32,11 +29,10 @@ export const company = {
   phoneHref: "+919381516771", // tel: (digits only, no spaces)
   whatsapp: "+91 93815 16771",
   whatsappHref: "919381516771", // wa.me format
-  // TODO(team): drop in the real Instagram / YouTube URLs when available.
   instagram: "https://www.instagram.com/ritoratechnologies?utm_source=qr&igsh=dDVmZ3BkMWk1M3Rz",
   youtube: "https://www.youtube.com/@RitoraTechnologies",
   replyTime: "We reply within one business day.",
-  year: 2026,
+  year: new Date().getFullYear(),
 };
 
 /** The three scroll-narrative beats (concrete, outcome-led). */
@@ -62,7 +58,7 @@ export const services: Service[] = [
     id: "mobile",
     title: "Mobile Apps",
     line: "Native-feel iOS & Android, React Native / Flutter.",
-    blurb: "Native-grade iOS & Android apps that feel fast and look sharp.",
+    blurb: "iOS and Android app development with shared codebases, responsive interfaces and the integrations your product needs.",
     stack: "React Native · Flutter · Expo",
     part: "Wheels — built for motion",
   },
@@ -70,7 +66,7 @@ export const services: Service[] = [
     id: "backend",
     title: "Backend & APIs",
     line: "Scalable services, clean APIs, the data layer underneath.",
-    blurb: "Resilient services and APIs engineered for scale and uptime.",
+    blurb: "Custom APIs, business logic and data systems that connect your product and support its growth.",
     stack: "Java Spring Boot · Node.js · Python FastAPI",
     part: "Engine — the powertrain",
   },
@@ -78,7 +74,7 @@ export const services: Service[] = [
     id: "frontend",
     title: "Frontend & Web",
     line: "Fast, modern, accessible interfaces.",
-    blurb: "Pixel-perfect UIs and design systems people love to use.",
+    blurb: "Custom websites and web applications with accessible interfaces, reusable design systems and performance in mind.",
     stack: "React.js · Vue · Next.js",
     part: "Body — the form you see",
   },
@@ -86,7 +82,7 @@ export const services: Service[] = [
     id: "devops",
     title: "DevOps & Cloud",
     line: "AWS/GCP, CI/CD, observability, infra that holds.",
-    blurb: "Automated, secure cloud infrastructure across every major provider.",
+    blurb: "Cloud infrastructure, automated deployments and monitoring to help your team release and operate software with confidence.",
     stack: "AWS · Azure · GCP · Hostinger",
     part: "Chassis — the foundation",
   },
@@ -94,7 +90,7 @@ export const services: Service[] = [
     id: "ai",
     title: "AI & Intelligent Apps",
     line: "RAG, agents, and AI features wired into real products.",
-    blurb: "Chatbots, automation and predictive features wired into your product.",
+    blurb: "Document assistants, chatbots and workflow automation that connect AI models to your product and business data.",
     stack: "LLMs · RAG · Automation",
     part: "Brain — the intelligence",
   },
@@ -117,7 +113,7 @@ export const projects: Project[] = [
   {
     title: "Parashu",
     category: "E-commerce",
-    description: "High-conversion storefront with a custom checkout pipeline.",
+    description: "An e-commerce storefront with a custom checkout pipeline.",
     accent: "#ff5d3b",
   },
   {
@@ -208,3 +204,11 @@ export type TeamMember = {
 // TODO(team): add REAL people + photos. The team section is hidden while this
 // array is empty — do NOT ship invented names/headshots.
 export const team: TeamMember[] = [];
+
+/** Answers grounded in the capabilities and contact process on this page. */
+export const faqs = [
+  { question: "What can you help us build?", answer: "We build web applications, iOS and Android apps, backend services and APIs, cloud infrastructure, and AI features. You can come to us with a new product idea or a part of an existing product that needs attention." },
+  { question: "Can you work with our existing technology?", answer: "Our stack includes React, Next.js, React Native, Flutter, Node.js, Python, Java Spring Boot and major cloud platforms. Share your current setup and the problem you want to solve so we can discuss the right fit." },
+  { question: "Do you work with teams outside India?", answer: "Yes. We are based in India and work with teams worldwide. Include your location and time zone in your enquiry so we can coordinate a conversation." },
+  { question: "What should I include in a project enquiry?", answer: "Tell us what you want to build, who it is for, and your preferred timeline. If you have an existing product, a brief or a budget range, include those too. We reply within one business day after receiving your email." },
+];

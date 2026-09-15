@@ -1,98 +1,38 @@
-// The AI-agent conversation logic, kept behind a single swappable boundary.
-//
-// v1 is a deterministic lead-qualifier (greet → intent → timeline → email).
-// To upgrade to an LLM: keep `nextAgentMessage`'s signature and stream the
-// reply instead of returning the canned string. Everything in AgentChat.tsx
-// already treats this as async, so a network/streaming call drops straight in.
-
 import { company } from "@/lib/content";
 
 export type Step = "intent" | "timeline" | "email" | "done";
-
-export type Lead = {
-  intent: string;
-  timeline: string;
-  email: string;
-};
-
+export type Lead = { intent: string; timeline: string; email: string };
 export const TIMELINE_CHOICES = ["ASAP", "1–3 months", "3–6 months", "Just exploring"];
 
-export function isEmail(v: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+export function isEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
-export const GREETING = `Hi! I'm ${company.shortName}'s AI agent 👋  In a few quick questions I'll get the right person to reply. First — what are you building?`;
+export const GREETING = `Hi! I can help you prepare a project enquiry for ${company.shortName}. This is a guided assistant. Nothing is sent until you send the email. What would you like to build?`;
 
-/**
- * Given the current step and the user's answer, return the next step and the
- * agent's reply. Pure + deterministic so it's trivial to test and to swap for
- * a model later.
- */
-export function advance(
-  step: Step,
-  value: string
-): { next: Step; reply: string; valid: boolean } {
-  const v = value.trim();
+/** Local guided enquiry. No network requests or claims of automatic delivery. */
+export function advance(step: Step, value: string): { next: Step; reply: string; valid: boolean } {
+  if (step !== "done" && !value.trim()) {
+    return { next: step, reply: "Please add an answer so we can continue.", valid: false };
+  }
   switch (step) {
     case "intent":
-      return {
-        next: "timeline",
-        valid: true,
-        reply: "Love it. What's your timeline?",
-      };
+      return { next: "timeline", valid: true, reply: "What timeline do you have in mind?" };
     case "timeline":
-      return {
-        next: "email",
-        valid: true,
-        reply: "Great. What's the best email to reach you?",
-      };
+      return { next: "email", valid: true, reply: "What email should the team reply to?" };
     case "email":
-      if (!isEmail(v)) {
-        return {
-          next: "email",
-          valid: false,
-          reply: "Hmm, that doesn't look like an email — mind trying again?",
-        };
-      }
-      return {
-        next: "done",
-        valid: true,
-        reply: `Thanks! We'll review this and reply within one business day. Talk soon. 🎉`,
-      };
-    case "done":
+      return isEmail(value)
+        ? { next: "done", valid: true, reply: "Your enquiry is ready. Review the details below, then open the email draft and press send in your email app. Nothing has been sent yet." }
+        : { next: "email", valid: false, reply: "Please enter a valid email address, such as you@company.com." };
     default:
       return { next: "done", valid: true, reply: "" };
   }
 }
 
-/** Async wrapper = the swap point for a streaming LLM backend. */
-export async function nextAgentMessage(step: Step, value: string) {
-  // e.g. const res = await fetch("/api/agent", { ... }); return stream(res)
-  return advance(step, value);
-}
-
-/**
- * Hand the captured lead to the backend. Tries POST /api/lead; if no endpoint
- * exists yet it falls back to a mailto so nothing is lost.
- * TODO(team): implement /api/lead (or wire to your CRM) and remove the fallback.
- */
-export async function submitLead(lead: Lead): Promise<boolean> {
-  try {
-    const res = await fetch("/api/lead", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(lead),
-    });
-    if (res.ok) return true;
-  } catch {
-    /* no endpoint yet — fall through */
-  }
-  if (typeof window !== "undefined") {
-    const subject = encodeURIComponent("New lead from the AI agent");
-    const body = encodeURIComponent(
-      `Building: ${lead.intent}\nTimeline: ${lead.timeline}\nEmail: ${lead.email}\n`
-    );
-    window.location.href = `mailto:${company.email}?subject=${subject}&body=${body}`;
-  }
-  return false;
+export function createEnquiryHref(lead: Lead): string {
+  const subject = encodeURIComponent("Project enquiry");
+  const body = encodeURIComponent(
+    `Hi ${company.shortName} team,\n\nI'd like to discuss a project.\n\nProject: ${lead.intent.trim()}\nTimeline: ${lead.timeline.trim()}\nReply to: ${lead.email.trim()}\n`
+  );
+  return `mailto:${company.email}?subject=${subject}&body=${body}`;
 }

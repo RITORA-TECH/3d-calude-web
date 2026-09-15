@@ -1,363 +1,103 @@
-"use client";
+import { company, services, clientsLine, techStack, testimonials, team, faqs } from "@/lib/content";
+import { MailIcon, PhoneIcon, WhatsAppIcon, InstagramIcon, YouTubeIcon } from "./Icons";
+import ConnectForm from "./ConnectForm";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import {
-  company,
-  services,
-  narrative,
-  clientsLine,
-  techStack,
-  testimonials,
-  team,
-} from "@/lib/content";
-import { fadeUp } from "@/lib/motion";
-import {
-  MailIcon,
-  PhoneIcon,
-  WhatsAppIcon,
-  InstagramIcon,
-  YouTubeIcon,
-} from "./Icons";
-
-/* ---------------------------------------------------------------- Hero --- */
 function Hero() {
   return (
-    <section className="relative flex min-h-screen w-full flex-col justify-end px-[8vw] pb-28 pt-28 md:justify-center md:pb-20">
-      <div className="max-w-[46ch]">
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="mb-4 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]"
-        >
-          {company.eyebrow}
-        </motion.p>
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.45 }}
-          className="max-w-[16ch] text-[clamp(2.2rem,7.5vw,6.2rem)] font-semibold leading-[0.98] tracking-tight text-white"
-        >
-          {company.headline}
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          className="mt-6 max-w-[44ch] text-lg text-white/70"
-        >
-          {company.sub}
-        </motion.p>
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1.1 }}
-        className="absolute bottom-10 left-[8vw] flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-white/50"
-      >
-        <span className="inline-block h-8 w-[1px] animate-pulse bg-white/40" />
-        {company.scrollCue}
-      </motion.div>
-    </section>
-  );
-}
-
-/* ---------------------------------------------------------- Transition --- */
-function Transition() {
-  return (
-    <section className="flex h-screen w-full items-center justify-end px-[8vw]">
-      <motion.h2
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.6 }}
-        className="max-w-[20ch] text-right text-[clamp(1.8rem,5vw,3.4rem)] font-medium leading-tight text-white/90"
-      >
-        {narrative[0]}
-      </motion.h2>
-    </section>
-  );
-}
-
-/* ---------------------------------------------------------------- Team --- */
-function TeamGrid() {
-  // Hidden until real people are added (see TODO in lib/content.ts).
-  if (team.length === 0) return null;
-  return (
-    <div className="mt-12 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
-      {team.map((m) => (
-        <div key={m.name} className="flex flex-col items-start gap-3">
-          <div className="aspect-square w-full overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-            {m.photo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={m.photo} alt={`${m.name}, ${m.role}`} className="h-full w-full object-cover" />
-            ) : null}
-          </div>
-          <div>
-            <div className="text-sm font-semibold text-white">{m.name}</div>
-            <div className="text-xs text-white/50">{m.role}</div>
-          </div>
+    <section className="hero section-shell" aria-labelledby="hero-title">
+      <div className="hero-copy text-scrim">
+        <p className="eyebrow">Software development · India to worldwide</p>
+        <h1 id="hero-title">We build software that <span>survives production.</span></h1>
+        <p className="hero-description">{company.sub}</p>
+        <div className="hero-actions">
+          <a className="button button-primary" href="#contact">Discuss your project <span aria-hidden="true">↗</span></a>
+          <a className="button button-secondary" href="#services">Explore our services</a>
         </div>
-      ))}
-    </div>
-  );
-}
-
-function Team() {
-  return (
-    <section className="flex min-h-screen w-full flex-col justify-end px-[8vw] pb-24">
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.4 }}
-      >
-        <p className="mb-2 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]">
-          One team, the whole stack
-        </p>
-        <h2 className="max-w-[22ch] text-[clamp(1.8rem,5vw,3.2rem)] font-semibold leading-tight text-white">
-          {narrative[1]}
-        </h2>
-        <p className="mt-5 max-w-[48ch] text-white/55">{clientsLine}</p>
-      </motion.div>
-      <TeamGrid />
+        <p className="hero-note">Web. Mobile. Cloud. AI. <span>One connected team.</span></p>
+      </div>
+      <a href="#approach" className="scroll-cue"><span aria-hidden="true">↓</span> Built for what comes next</a>
     </section>
   );
 }
 
-/* ------------------------------------------------------------ Services --- */
+function Approach() {
+  return (
+    <section id="approach" className="story-section section-shell" aria-labelledby="approach-title">
+      <div className="story-copy text-scrim">
+        <p className="eyebrow">Beyond the first launch</p>
+        <h2 id="approach-title">Good software holds up <span className="muted-heading">in the real world.</span></h2>
+        <p className="section-description">Real users. Growing traffic. Changing requirements. We bring the interface, services and infrastructure together, so your product is ready for what comes next.</p>
+        <a href="#services" className="text-link">See what we build <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  );
+}
+
+function About() {
+  return (
+    <section id="about" className="about-section section-shell" aria-labelledby="about-title">
+      <div className="about-copy text-scrim">
+        <p className="eyebrow">One team, the whole stack</p>
+        <h2 id="about-title">From your first idea <span className="muted-heading">to your next stage.</span></h2>
+        <p className="section-description">{company.about}</p>
+        <p className="sector-line">{clientsLine}</p>
+      </div>
+      <div className="capability-strip" aria-label="Our focus">
+        <span>Product-minded engineering</span><span>Connected systems</span><span>Built to grow</span>
+      </div>
+      {team.length > 0 && <div className="team-grid">{team.map((member) => <article key={member.name}>
+        {member.photo && <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={member.photo} alt={`${member.name}, ${member.role}`} width="240" height="240" loading="lazy" className="team-photo" />
+        </>}
+        <h3>{member.name}</h3><p>{member.role}</p>
+      </article>)}</div>}
+    </section>
+  );
+}
+
 function Services() {
   return (
-    <section className="flex min-h-screen w-full flex-col justify-end px-[8vw] pb-20">
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.3 }}
-      >
-        <p className="mb-2 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]">
-          What we build
-        </p>
-        <h2 className="mb-10 max-w-[20ch] text-[clamp(2rem,5vw,3.4rem)] font-semibold leading-tight text-white">
-          {narrative[2]}
-        </h2>
-      </motion.div>
-
-      <div className="grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
-        {services.map((s, i) => (
-          <motion.div
-            key={s.id}
-            custom={i}
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.4 }}
-            className="border-l border-white/10 pl-4"
-          >
-            <div className="flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#ff5d3b]" />
-              <h3 className="text-lg font-semibold text-white">{s.title}</h3>
-            </div>
-            <p className="mt-2 text-sm leading-relaxed text-white/55">{s.line}</p>
-          </motion.div>
-        ))}
+    <section id="services" className="services-section section-shell" aria-labelledby="services-title">
+      <div className="section-heading">
+        <div><p className="eyebrow">What we build</p><h2 id="services-title">Every layer.<br /><span className="muted-heading">Working together.</span></h2></div>
+        <p className="section-description">Start with the expertise you need. Connect the rest as your product grows.</p>
       </div>
-
-      {/* tech-stack badges — technical-buyer trust */}
-      <div className="mt-12 flex flex-wrap gap-2">
-        {techStack.map((t) => (
-          <span
-            key={t}
-            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/60"
-          >
-            {t}
-          </span>
-        ))}
+      <div className="services-grid">
+        {services.map((service, index) => <article key={service.id} id={`service-${service.id}`} className="service-card">
+          <span className="card-number" aria-hidden="true">0{index + 1}</span>
+          <h3>{service.title}</h3><p>{service.blurb}</p>
+          <p className="service-stack">{service.stack}</p>
+        </article>)}
+        <div className="service-card service-cta"><span className="card-number">Your next project</span><h3>Not sure where to start?</h3><p>Tell us what you want to build. We can talk through the technical pieces together.</p><a className="text-link" href="#contact">Let&apos;s figure it out <span aria-hidden="true">↗</span></a></div>
       </div>
+      <div className="tech-stack"><p>Tools we work with</p><ul aria-label="Technologies">{techStack.map((tech) => <li key={tech}>{tech}</li>)}</ul></div>
     </section>
   );
 }
 
-/* -------------------------------------------------------- Testimonials --- */
 function Testimonials() {
-  // Hidden until real, consented quotes exist (see TODO in lib/content.ts).
   if (testimonials.length === 0) return null;
-  return (
-    <section className="flex w-full flex-col justify-center px-[8vw] py-24">
-      <motion.p
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true }}
-        className="mb-10 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]"
-      >
-        In their words
-      </motion.p>
-      <div className="grid gap-6 md:grid-cols-2">
-        {testimonials.map((t, i) => (
-          <motion.figure
-            key={i}
-            custom={i}
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.4 }}
-            className="rounded-2xl border border-white/10 bg-[#0a0e1c] p-7"
-          >
-            <blockquote className="text-lg leading-relaxed text-white/85">
-              “{t.quote}”
-            </blockquote>
-            <figcaption className="mt-5 text-sm text-white/50">
-              <span className="text-white/80">{t.name}</span> — {t.role}, {t.company}
-            </figcaption>
-          </motion.figure>
-        ))}
-      </div>
-    </section>
-  );
+  return <section className="section-shell testimonials-section" aria-labelledby="testimonials-title"><p className="eyebrow">In their words</p><h2 id="testimonials-title">From the teams we work with.</h2><div className="quote-grid">{testimonials.map((quote) => <figure className="quote-card" key={`${quote.name}-${quote.company}`}><blockquote>“{quote.quote}”</blockquote><figcaption>{quote.name} — {quote.role}, {quote.company}</figcaption></figure>)}</div></section>;
 }
 
-/* ---------------------------------------------------- Connect (form) --- */
-function ConnectForm() {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
-
-  function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!email) return;
-    const subject = encodeURIComponent("Start the conversation — new project");
-    const body = encodeURIComponent(
-      `Hi ${company.shortName} team,\n\nI'd like to talk about a project.\n\nMy email: ${email}\n`
-    );
-    window.location.href = `mailto:${company.email}?subject=${subject}&body=${body}`;
-    setSent(true);
-  }
-
-  return (
-    <form onSubmit={submit} className="w-full max-w-md">
-      <p className="mb-3 text-sm text-white/55">{company.replyTime}</p>
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <label htmlFor="connect-email" className="sr-only">
-          Your email address
-        </label>
-        <input
-          id="connect-email"
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@company.com"
-          className="w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/35 focus:border-[#ff5d3b]"
-        />
-        <button
-          type="submit"
-          className="shrink-0 rounded-xl bg-[#ff5d3b] px-6 py-3 text-sm font-semibold text-white transition-transform hover:scale-[1.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff5d3b]"
-        >
-          {sent ? "Opening…" : "Start the conversation"}
-        </button>
-      </div>
-    </form>
-  );
+function FAQ() {
+  return <section id="faq" className="faq-section section-shell" aria-labelledby="faq-title"><div><p className="eyebrow">A few useful answers</p><h2 id="faq-title">Before we<br /><span className="muted-heading">get started.</span></h2></div><div className="faq-list">{faqs.map((faq) => <details key={faq.question}><summary>{faq.question}<span aria-hidden="true">+</span></summary><p>{faq.answer}</p></details>)}</div></section>;
 }
 
-/* ------------------------------------------------------------ Contact --- */
-function Projects() {
-  return (
-    <section className="flex min-h-screen w-full flex-col justify-center overflow-hidden py-24">
-      {/* contact */}
-      <motion.div
-        id="contact"
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.4 }}
-        className="mt-24 flex scroll-mt-24 flex-col items-start gap-10 px-[8vw] md:flex-row md:items-end md:justify-between"
-      >
-        <div className="max-w-xl">
-          <p className="mb-2 text-sm uppercase tracking-[0.4em] text-[#ff5d3b]">
-            Let&apos;s connect
-          </p>
-          <h2 className="text-[clamp(2rem,6vw,4rem)] font-semibold leading-none text-white">
-            Tell us what you&apos;re building.
-          </h2>
-          <p className="mb-7 mt-4 max-w-[46ch] text-white/55">
-            {company.about} Drop your email — we reply within one business day.
-          </p>
-          <ConnectForm />
-        </div>
-        <div className="flex flex-wrap gap-2.5 md:justify-end">
-          {[
-            {
-              href: `mailto:${company.email}`,
-              label: `Email ${company.email}`,
-              icon: <MailIcon className="h-[18px] w-[18px]" />,
-              external: false,
-            },
-            {
-              href: `tel:${company.phoneHref}`,
-              label: `Call ${company.phone}`,
-              icon: <PhoneIcon className="h-[18px] w-[18px]" />,
-              external: false,
-            },
-            {
-              href: `https://wa.me/${company.whatsappHref}`,
-              label: `WhatsApp ${company.whatsapp}`,
-              icon: <WhatsAppIcon className="h-[18px] w-[18px]" />,
-              external: true,
-            },
-            {
-              href: company.instagram,
-              label: "Ritora on Instagram",
-              icon: <InstagramIcon className="h-[18px] w-[18px]" />,
-              external: true,
-            },
-            {
-              href: company.youtube,
-              label: "Ritora on YouTube",
-              icon: <YouTubeIcon className="h-[18px] w-[18px]" />,
-              external: true,
-            },
-          ].map((c) => (
-            <a
-              key={c.label}
-              href={c.href}
-              aria-label={c.label}
-              title={c.label}
-              {...(c.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/12 text-white/70 transition-colors hover:border-[#ff5d3b] hover:text-[#ff5d3b]"
-            >
-              {c.icon}
-            </a>
-          ))}
-        </div>
-      </motion.div>
-
-      <div className="mt-16 border-t border-white/10 px-[8vw] pt-6 text-xs text-white/30">
-        <p>
-          © {company.year} {company.name}. All rights reserved.
-        </p>
-        <p className="mt-1 text-white/25">
-          {company.name} · ritoratechnologies.com
-        </p>
-      </div>
-    </section>
-  );
+function Contact() {
+  return <section id="contact" className="contact-section section-shell" aria-labelledby="contact-title">
+    <div className="contact-copy"><p className="eyebrow">Let&apos;s build something useful</p><h2 id="contact-title">What are<br />you <span>building?</span></h2><p className="section-description">A new idea, a product that needs to grow, or a technical challenge. Tell us where you are and where you want to go.</p>
+      <div className="contact-links"><a href={`mailto:${company.email}`}><MailIcon />{company.email}</a><a href={`tel:${company.phoneHref}`}><PhoneIcon />{company.phone}</a><a href={`https://wa.me/${company.whatsappHref}`} target="_blank" rel="noopener noreferrer"><WhatsAppIcon />Start a WhatsApp conversation <span className="sr-only">(opens in a new tab)</span><span aria-hidden="true">↗</span></a></div>
+    </div><ConnectForm />
+  </section>;
 }
 
-/* ----------------------------------------------------------- Overlay --- */
-export default function Overlay() {
-  return (
-    <div className="w-screen text-white">
-      <Hero />
-      <Transition />
-      <Team />
-      <Services />
-      <Testimonials />
-      <Projects />
+export default function Sections() {
+  return <>
+    <div id="story"><Hero /><Approach /><About /><Services /></div>
+    <div className="content-surface"><Testimonials /><FAQ /><Contact />
+      <footer className="site-footer section-shell"><div><p>© {company.year} {company.name}.</p><p>India to worldwide.</p></div><nav aria-label="Footer navigation"><a href="#faq">FAQs</a><a href={company.instagram} target="_blank" rel="noopener noreferrer" aria-label={`${company.shortName} on Instagram (opens in a new tab)`}><InstagramIcon /></a><a href={company.youtube} target="_blank" rel="noopener noreferrer" aria-label={`${company.shortName} on YouTube (opens in a new tab)`}><YouTubeIcon /></a><a href="#top">Back to top ↑</a></nav></footer>
     </div>
-  );
+  </>;
 }

@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import { company } from "@/lib/content";
 
@@ -9,14 +7,11 @@ import { company } from "@/lib/content";
  */
 export default function Brand() {
   return (
+    <header className="site-header">
     <a
       href="#top"
-      onClick={(e) => {
-        e.preventDefault();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }}
       aria-label={`${company.name} — home`}
-      className="fixed left-[8vw] top-5 z-30 flex items-center gap-2.5"
+      className="brand-link"
     >
       <Image
         src="/ritora-symbol.png"
@@ -30,10 +25,17 @@ export default function Brand() {
         <span className="text-base font-semibold tracking-tight text-white">
           {company.shortName}
         </span>
-        <span className="mt-[3px] text-[8px] font-medium uppercase tracking-[0.3em] text-[#ff5d3b]">
+        <span className="mt-1 text-xs font-medium uppercase tracking-[0.14em] text-[#ff805f]">
           Technologies
         </span>
       </span>
     </a>
+    <nav aria-label="Main navigation" className="main-nav">
+      <a href="#services">Services</a>
+      <a href="#about">About us</a>
+      <a href="#faq" className="nav-about">FAQs</a>
+      <a href="#contact" className="nav-contact">Let&apos;s talk <span aria-hidden="true">↗</span></a>
+    </nav>
+    </header>
   );
 }
